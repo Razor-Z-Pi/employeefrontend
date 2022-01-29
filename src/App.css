@@ -6,6 +6,7 @@
 
 body {
   margin: 0;
+  padding: 0;
 }
 
 a {
@@ -20,28 +21,18 @@ h1 {
   margin: 0;
 }
 
-.App {
-  min-height: 100vh;
-
-  color: white;
-  background-color: #282c34;
-
-  text-align: center;
+ul {
+  list-style: none;
 }
 
-.Authorization {
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-end;
-  width: 100%;
-  height: 400px;
-}
+/*Шапка*/
 
-.modal {
-  margin-right: 300px;
-  padding: 30px;
+.Navigate {
+  height: 70px;
 
   background-color: #20232a;
+}
 
-  border-radius: 50px;
+.PointNav {
+  color: white;
 }
