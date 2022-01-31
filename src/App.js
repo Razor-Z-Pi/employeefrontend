@@ -59,8 +59,8 @@ function App() {
   }
 
   return (
-    <div>
-      <form action="">
+    <div className="App">
+      <form action="" className="FormApp">
         <h1>Авторизация</h1>
         {
           (userError && userDirty) && <div style={{color:"red"}}>{userError}</div>
