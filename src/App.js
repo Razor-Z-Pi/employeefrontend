@@ -1,6 +1,8 @@
 import './App.css';
 import React, {useEffect, useState} from "react";
 import Header from "./Component/Header";
+import Button from '@mui/material/Button';
+import {Alert, TextField} from "@mui/material";
 
 function App() {
 
@@ -59,20 +61,41 @@ function App() {
   }
 
   return (
-    <div className="App">
-      <form action="" className="FormApp">
-        <h1>Авторизация</h1>
-        {
-          (userError && userDirty) && <div style={{color:"red"}}>{userError}</div>
-        }
-        <input onChange={e => userHandler(e)} value={user} onBlur={e => blurHandler(e)} name="user" type="text"/>
-        {
-          (passwordError && passwordDirty) && <div style={{color:"red"}}>{passwordError}</div>
-        }
-        <input onChange={e => passwordHandler(e)} value={password} onBlur={e => blurHandler(e)} name="password" type="password"/>
-        <button disabled={!formValid} type="submit">Войти</button>
-      </form>
-    </div>
+    <>
+      <div className="App">
+        <form method="POST" action="" className="FormApp">
+          <h1>Авторизация</h1>
+          <TextField
+            id="input-with-sx"
+            label="Логин"
+            onChange={e => userHandler(e)}
+            value={user}
+            onBlur={e => blurHandler(e)}
+            name="user"
+            type="text"/>
+          <br/>
+          <TextField
+            autoComplete="current-password"
+            label="Пароль"
+            id="outlined-password-input"
+            onChange={e => passwordHandler(e)}
+            value={password}
+            onBlur={e => blurHandler(e)}
+            name="password"
+            type="password"/>
+          <br/>
+          <Button variant="contained" color="success" disabled={!formValid} type="submit">Войти</Button>
+        </form>
+      </div>
+
+      {
+        (userError && userDirty) && <Alert severity="error">{userError}</Alert>
+      }
+      {
+        (passwordError && passwordDirty) && <Alert severity="error">{passwordError}</Alert>
+      }
+
+    </>
   );
 }
 

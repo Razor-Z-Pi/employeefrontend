@@ -49,13 +49,18 @@ ul {
   align-items: center;
 
   width: 350px;
-  height: 250px;
+  height: 300px;
 
   padding: 10px;
 }
 
 .FormApp h1 {
   color: #61dafb;
+  margin-bottom: 30px;
+}
+
+.inputApp {
+  margin: 30px;
 }
 
 /*Шапка*/
