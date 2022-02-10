@@ -1,8 +1,10 @@
 import './App.css';
 import React, {useEffect, useState} from "react";
-import Header from "./Component/Header";
 import Button from '@mui/material/Button';
 import {Alert, TextField} from "@mui/material";
+import {Link} from "react-router-dom";
+import {red} from "@mui/material/colors";
+import TitleHeader from "./Component/TitleHeader";
 
 function App() {
 
@@ -62,6 +64,10 @@ function App() {
 
   return (
     <>
+      <div>
+        <TitleHeader/>
+      </div>
+
       <div className="App">
         <form method="POST" action="" className="FormApp">
           <h1>Авторизация</h1>
@@ -84,7 +90,7 @@ function App() {
             name="password"
             type="password"/>
           <br/>
-          <Button variant="contained" color="success" disabled={!formValid} type="submit">Войти</Button>
+          <Button variant="contained" color="success" disabled={!formValid} type="button">Войти</Button>
         </form>
       </div>
 
