@@ -1,10 +1,15 @@
 import React, {Component} from 'react';
+import TitleHeader from "../Component/TitleHeader/TitleHeader";
+import TableEmployee from "../Component/TableEmployee/TableEmployee";
 
 class Home extends Component {
   render() {
     return (
       <div>
-        <h1>Hello World</h1>
+        <TitleHeader/>
+        <div>
+          <TableEmployee/>
+        </div>
       </div>
     );
   }

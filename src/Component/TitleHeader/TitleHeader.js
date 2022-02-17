@@ -1,8 +1,7 @@
 import React from "react";
-import {AppBar, Box, createTheme, IconButton, Toolbar, Typography} from "@mui/material";
+import {AppBar, Box, IconButton, Toolbar, Typography} from "@mui/material";
 import Button from "@mui/material/Button";
-import {ThemeProvider} from "@emotion/react";
-import { AccessAlarm, ThreeDRotation } from '@mui/icons-material';
+import Login from "../../Pages/Login";
 import MenuIcon from '@mui/icons-material/Menu';
 import {
   BrowserRouter as Router,
@@ -10,7 +9,15 @@ import {
   Route,
   Link
 } from "react-router-dom";
-import App from "../App";
+
+
+function LoginGhost(props) {
+  if (props) {
+    props.preventDefault();
+    document.getElementById("btnLogin").style.visibility = "hidden";
+    document.getElementById("btnLogin").style.display = "none";
+  }
+}
 
 function TitleHeader() {
   return (
@@ -19,6 +26,7 @@ function TitleHeader() {
         <AppBar position="static">
           <Toolbar>
             <IconButton
+              className="Burger"
               size="large"
               edge="start"
               color="inherit"
@@ -30,10 +38,19 @@ function TitleHeader() {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               <b>Планировщик рабочей недели</b>
             </Typography>
-            <Button color="inherit">Login</Button>
+            <Button id="btnLogin" onClick={(props) => {LoginGhost(props)}} color="inherit">
+              <Link to="/Login">Login</Link>
+            </Button>
           </Toolbar>
         </AppBar>
       </Box>
+
+      <Switch>
+        <Route path="/Login">
+          <Login />
+        </Route>
+      </Switch>
+
     </Router>
   )
 }

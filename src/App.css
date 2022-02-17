@@ -8,7 +8,7 @@ body {
   margin: 0;
   padding: 0;
 
-  background-color: #282c34;
+  background-color: white;
 }
 
 a {
@@ -38,8 +38,20 @@ ul {
   margin-right: -50%;
   transform: translate(-50%, -50%);
 
-  background-color: gray;
+  background-color: #cecbcb;
   border-radius: 50px;
+  opacity: 0.3;
+
+  transition: opacity ease-in 0.5s;
+  transition: box-shadow linear 0.3s;
+}
+
+.App:hover,
+.App:focus,
+.Login:focus,
+.Password:focus{
+  opacity: 0.9;
+  box-shadow: 1px 2px 5px 2px grey;
 }
 
 .FormApp {
@@ -55,10 +67,19 @@ ul {
 }
 
 .FormApp h1 {
-  color: #61dafb;
+  color: white;
   margin-bottom: 30px;
 }
 
 .inputApp {
   margin: 30px;
+}
+
+.AppMessage {
+  display: flex;
+  justify-content: center;
+}
+
+.Burger {
+  visibility: visible;
 }
