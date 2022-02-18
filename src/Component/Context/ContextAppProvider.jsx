@@ -10,6 +10,7 @@ class ContextAppProvider extends Component {
     super(props);
     this.state = {
       employee: [],
+      message: {},
     };
     this.read();
   }
@@ -19,12 +20,18 @@ class ContextAppProvider extends Component {
     event.preventDefault();
     axios.post("https://127.0.0.1:8000/api/employee/create", employee)
       .then(response => {
-        console.log(response.data);
-        let data = [...this.state.employee];
-        data.push(response.data.employee);
-        this.setState({
-          employee: data,
-        })
+        if (response.data.message.level === "success") {
+          let data = [...this.state.employee];
+          data.push(response.data.employee);
+          this.setState({
+            employee: data,
+            message: response.data.message,
+          })
+        } else {
+          this.setState({
+            message: response.data.message,
+          })
+        }
       }).catch(error => {
       console.error(error);
     })
@@ -66,12 +73,12 @@ class ContextAppProvider extends Component {
 
   //delete
   delete(data) {
-    axios.delete("http://127.0.0.1:8000/api/delete/" + data.id)
+    axios.delete("http://127.0.0.1:8000/api/employee/" + data.id)
       .then(response => {
         //message
 
         let employee = [...this.state.employee];
-        let dataDelete = employee.find(props => {
+        let dataDelete   = employee.find(props => {
           return props.id === data.id;
         });
 
@@ -92,7 +99,8 @@ class ContextAppProvider extends Component {
           ...this.state,
           create: this.create.bind(this),
           update: this.update.bind(this),
-          delete: this.delete.bind(this)
+          delete: this.delete.bind(this),
+          setMessage: (message) => this.setState({message: message})
         }}>
           {this.props.children}
         </ItemContext.Provider>

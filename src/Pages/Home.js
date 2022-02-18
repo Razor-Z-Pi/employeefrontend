@@ -6,10 +6,7 @@ class Home extends Component {
   render() {
     return (
       <div>
-        <TitleHeader/>
-        <div>
-          <TableEmployee/>
-        </div>
+        <TableEmployee/>
       </div>
     );
   }

@@ -1,12 +1,9 @@
-import React, {Component, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Alert, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
 import "../App.css";
 import axios from "axios";
-
-// import {login} from "../Api/Authorization";
-
-function Login() {
+const Login = () =>  {
 
   const [user, setUser] = useState(""); //значение input
   const [password, setPassword] = useState("");
@@ -49,6 +46,7 @@ function Login() {
       setPasswordError("Пароль не больше 8 цифр");
     }
   }
+
   //Когда пользователь покинул поле
   const blurHandler = (e) => {
     switch (e.target.name) {
@@ -64,13 +62,15 @@ function Login() {
   const handleSubmit = props => {
     props.preventDefault();
 
-    axios.post("https://127.0.0.1:8000/api/employees", {
+    axios.post("https://127.0.0.1:8000/api/", {
       login: user,
       Password: password
-    }).then(res => {
-      console.log(res);
-      console.log(res.data);
     })
+      .then(response => {
+        console.log(response);
+    }).catch(error => {
+      console.error(error);
+    });
   }
 
   return (
@@ -121,11 +121,5 @@ function Login() {
     </div>
   );
 }
-
-
-// static async Login() {
-//   await login(this.state.login, this.state.password);
-// }
-
 
 export default Login;
