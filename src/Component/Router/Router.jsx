@@ -10,6 +10,7 @@ import ProjectStatus from "../../Pages/ProjectStatus/ProjectStatus";
 
 const HomeList = () => (
   <ContextAppProvider>
+    <Navigate/>
     <Home />
     <AppSnackbar />
   </ContextAppProvider>
@@ -24,9 +25,8 @@ const LoginRedirect = () => (
 const Router = () => {
   return (
     <BrowserRouter>
-      <Navigate/>
       <Switch>
-        <Redirect exact from="/" to="/HomeList"/>
+        <Redirect exact from="/" to="/LoginRedirect"/>
         <Route exact path="/HomeList" component={HomeList}/>
         <Route exact path="/ProjectStatus" component={ProjectStatus}/>
         <Route exact path="/LoginRedirect" component={LoginRedirect}/>

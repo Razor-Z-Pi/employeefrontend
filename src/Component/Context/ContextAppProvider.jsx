@@ -2,6 +2,12 @@ import React, {Component, createContext} from 'react';
 import axios from "axios";
 
 export const ItemContext = createContext();
+const config = {
+  headers: {
+    accept: "application/json",
+    contentType: "application/json",
+  }
+}
 
 class ContextAppProvider extends Component {
 
@@ -51,7 +57,7 @@ class ContextAppProvider extends Component {
 
   //update
   update(data) {
-    axios.put("http://127.0.0.1:8000/api/employee/update/" + data.id, data)
+    axios.put("http://127.0.0.1:8000/api/employee/update/" + data.id, data, config)
       .then(response => {
         let dataEmployee = [...this.state.employee];
         let dataSerch = dataEmployee.find(props => {
@@ -73,7 +79,7 @@ class ContextAppProvider extends Component {
 
   //delete
   delete(data) {
-    axios.delete("http://127.0.0.1:8000/api/employee/" + data.id)
+    axios.delete("http://127.0.0.1:8000/api/employee/delete/" + data.id, config)
       .then(response => {
         //message
 

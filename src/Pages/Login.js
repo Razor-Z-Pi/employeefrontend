@@ -3,6 +3,9 @@ import {Alert, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
 import "../App.css";
 import axios from "axios";
+import {AppBar, Toolbar, Typography} from "@material-ui/core";
+import {Redirect} from "react-router-dom";
+
 const Login = () =>  {
 
   const [user, setUser] = useState(""); //значение input
@@ -12,6 +15,8 @@ const Login = () =>  {
   const [userError, setUserError] = useState("Логин не должно быть пустым"); //Уведомления об о ошибки
   const [passwordError, setPasswordError] = useState("Пароль не должен быть пустым");
   const [formValid, setFormValid] = useState(false); // состояние кнопки
+
+  const [redirectPut, setRedirectPut] = useState(false); // Переход с авторизации
 
   // разблокировка кнопки или нет???
   useEffect(() => {
@@ -59,22 +64,43 @@ const Login = () =>  {
     }
   }
 
+
+  // Отправка данных с полей для проверки, сотрудника в БД
   const handleSubmit = props => {
     props.preventDefault();
 
-    axios.post("https://127.0.0.1:8000/api/", {
-      login: user,
-      Password: password
-    })
+    console.log(user);
+    console.log(password);
+
+    axios.post("https://127.0.0.1:8000/auth/login", {
+        login: user,
+        Password: password
+      }
+    )
       .then(response => {
-        console.log(response);
-    }).catch(error => {
+        if (response.data.message.level === "good") {
+          setRedirectPut(true);
+        } else {
+          setRedirectPut(false);
+        }
+      }).catch(error => {
       console.error(error);
     });
   }
 
   return (
     <div>
+      <AppBar>
+        <Toolbar>
+          <Typography  variant="h6">
+            Планировщик рабочей недели!!!
+          </Typography>
+        </Toolbar>
+      </AppBar>
+
+      <br/>
+      <br/>
+      <br/>
       <div className="App">
         <form method="POST" onSubmit={props => handleSubmit(props)} action="" className="FormApp">
           <h1>Авторизация</h1>
@@ -118,6 +144,10 @@ const Login = () =>  {
           (passwordError && passwordDirty) && <Alert className="AppMessage" severity="error">{passwordError}</Alert>
         }
       </div>
+
+      {
+        (redirectPut && <Redirect to="./HomeList" />)
+      }
     </div>
   );
 }
