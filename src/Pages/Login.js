@@ -17,6 +17,7 @@ const Login = () =>  {
   const [formValid, setFormValid] = useState(false); // состояние кнопки
 
   const [redirectPut, setRedirectPut] = useState(false); // Переход с авторизации
+  const [blockAuth, setBlockAuth] = useState(false); // Если не прошёл проверку авторизации
 
   // разблокировка кнопки или нет???
   useEffect(() => {
@@ -78,10 +79,13 @@ const Login = () =>  {
       }
     )
       .then(response => {
+        console.log(response);
         if (response.data.message.level === "good") {
+          setBlockAuth(true);
           setRedirectPut(true);
         } else {
           setRedirectPut(false);
+          setBlockAuth(true);
         }
       }).catch(error => {
       console.error(error);
@@ -142,6 +146,9 @@ const Login = () =>  {
         }
         {
           (passwordError && passwordDirty) && <Alert className="AppMessage" severity="error">{passwordError}</Alert>
+        }
+        {
+          blockAuth && <Alert className="AppMessage" severity="error">Не правильно введён пароль и логин!!!</Alert>
         }
       </div>
 
