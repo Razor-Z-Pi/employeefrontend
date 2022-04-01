@@ -1,8 +1,9 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {ItemContext} from "../Context/ContextAppProvider";
 import {
+  alpha,
   Fab, FormControlLabel,
-  IconButton, Switch,
+  IconButton, InputBase, Switch,
   Table,
   TableBody,
   TableCell,
@@ -17,16 +18,14 @@ import CheckIcon from '@mui/icons-material/Check';
 import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
 import DeleteDialog from "../DeleteDialog/DeleteDialog";
 import {Paper} from "@mui/material";
-import { styled } from '@mui/material/styles';
-import { tableCellClasses } from '@mui/material/TableCell';
+import {styled} from '@mui/material/styles';
+import {tableCellClasses} from '@mui/material/TableCell';
+import SearchIcon from "@mui/icons-material/Search";
 import Box from "@mui/material/Box";
-import SpeedDial from '@mui/material/SpeedDial';
+import {SpeedDial, SpeedDialAction, SpeedDialIcon} from "@mui/lab";
 import PrintIcon from '@mui/icons-material/Print';
-import ShareIcon from '@mui/icons-material/Share';
-import SpeedDialIcon from '@mui/material/SpeedDialIcon';
-import SpeedDialAction from '@mui/material/SpeedDialAction';
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
+const StyledTableCell = styled(TableCell)(({theme}) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
@@ -62,24 +61,11 @@ const TableEmployee = () => {
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [fname, setfname] = useState(""); //значение input
-  const [lname, setlname]= useState("");
-  const [position, setposition] = useState("");
-  const [formValid, setFormValid] = useState(false); // состояние кнопки
+  const [serchValue, setSerchValue] = useState("");
 
-  const actions = [
-    { icon: <PrintIcon />, name: 'Print' },
-    { icon: <ShareIcon />, name: 'Share' },
-  ];
-
-  useEffect(() => {
-      if (fname || lname || position) {
-        setFormValid(false);
-      } else {
-        setFormValid(true);
-      }
-    },
-    [fname, lname, position]);
+  const filterEmployee = context.employee.filter(item => {
+    return item.fname.toLowerCase().includes(serchValue.toLowerCase());
+  });
 
   // Убираем или добавляем padding
   const handleChangeDense = (event) => {
@@ -95,11 +81,74 @@ const TableEmployee = () => {
     setPage(0);
   };
 
+  const [validFname, setValidFname] = useState(false);
+  const [validLname, setValidLname] = useState(false);
+  const [validPosition, setValidPosition] = useState(false);
+  const [btnAdd, setBtnAdd] = useState(true);
+
+  const validateButtonFname = (event) => {
+    event.preventDefault();
+    if (!/^\s*$/.test(event.target.value)) {
+      setValidFname(true);
+    } else {
+      setValidFname(false);
+      setBtnAdd(true);
+    }
+  }
+
+  const validateButtonLname = (event) => {
+    event.preventDefault();
+    if (!/^\s*$/.test(event.target.value)) {
+      setValidLname(true);
+    } else {
+      setValidLname(false);
+      setBtnAdd(true);
+    }
+  }
+
+  const validateButtonPosition = (event) => {
+    event.preventDefault();
+    if (!/^\s*$/.test(event.target.value)) {
+      setValidPosition(true);
+    } else {
+      setValidPosition(false);
+      setBtnAdd(true);
+    }
+  }
+
+  const reDisable = () => {
+    if (validFname && validLname && validPosition) {
+      setBtnAdd(false);
+    }
+  }
+
+  const btnAddProtected = (event) => {
+    event.preventDefault();
+    if (addEmployeefname == "") {
+      alert("Строка имение не должна бить пустая!!!");
+    }
+    if (addEmployeelname == "") {
+      alert("Строка фамилии не должна бить пустая!!!");
+    }
+    if (addEmployeePosition == "") {
+      alert("Строка должности не должна бить пустая!!!");
+    }
+    if (addEmployeePosition != "" && addEmployeelname != "" && addEmployeefname != "") {
+      context.create(event, {fname: addEmployeefname, lname: addEmployeelname, position: addEmployeePosition});
+    }
+  }
+
+  const actions = [
+    {
+      icon: <PrintIcon values="Print" onClick={window.print}/>, name: 'PDF'
+    },
+  ];
+
   return (
     <React.Fragment>
-      <Paper sx={{ width: "100%", mb: 2 }}>
+      <Paper sx={{width: "100%", mb: 2}}>
         <form onSubmit={(event) => {
-          context.create(event, {fname: addEmployeefname, lname: addEmployeelname, position: addEmployeePosition})
+          btnAddProtected(event);
         }}>
 
           <div>
@@ -107,41 +156,64 @@ const TableEmployee = () => {
               <TableHead>
                 <TableRow>
                   <TableCell>
-                    <TextField
-                      fullWidth={true}
-                      value={addEmployeefname}
-                      onChange={(event) => {
-                        setAddEmployeeFname(event.target.value)
-                      }}
-                      label="Новое имя"
-                    name="fnameValid"/>
+                    <TextField fullWidth={true} value={addEmployeefname} onChange={(event) => {
+                      if (event.target.value.length < 25) {
+                        setAddEmployeeFname(event.target.value);
+                        validateButtonFname(event);
+                        reDisable();
+                      } else {
+                        alert("Не больше 25 символов");
+                      }
+                    }} label="Имя"/>
                   </TableCell>
 
                   <TableCell align="center">
-                    <TextField fullWidth={true}
-                               value={addEmployeelname}
-                               onChange={(event) => {
-                                 setAddEmployeeLname(event.target.value)
-                               }}
-                               label="Новая фамилия"
-                               name="lnameValid"/>
+                    <TextField fullWidth={true} value={addEmployeelname} onChange={(event) => {
+                      if (event.target.value.length < 25) {
+                        setAddEmployeeLname(event.target.value);
+                        validateButtonLname(event);
+                        reDisable();
+                      } else {
+                        alert("Не больше 25 символов");
+                      }
+                    }} label="Фамилия"/>
                   </TableCell>
 
                   <TableCell>
-                    <TextField fullWidth={true}
-                               value={addEmployeePosition}
-                               onChange={(event) => {
-                                 setAddEmployeePosition(event.target.value)
-                               }}
-                               label="Новая должность"
-                               name="positionValid"/>
+                    <TextField fullWidth={true} value={addEmployeePosition} onChange={(event) => {
+                      if (event.target.value.length < 25) {
+                        setAddEmployeePosition(event.target.value);
+                        validateButtonPosition(event);
+                        reDisable();
+                      } else {
+                        alert("Не больше 25 символов");
+                      }
+                    }} label="Должность"/>
+                  </TableCell>
+
+                  <TableCell>
+                    <Box sx={{display: 'flex', alignItems: 'flex-end'}}>
+                      <SearchIcon sx={{color: 'action.active', mr: 1, my: 0.5}}/>
+                      <TextField onChange={(event) => {
+                        setSerchValue(event.target.value);
+                      }}
+                                 id="input-with-sx"
+                                 label="Поиск..."
+                                 variant="standard"/>
+                    </Box>
                   </TableCell>
 
                   <TableCell align="right">
-                    <IconButton disabled={!formValid} type="submit">
-                      <Fab color="primary" aria-label="add">
-                        <AddIcon/>
-                      </Fab>
+                    <IconButton disabled={btnAdd} type="submit">
+                      {!btnAdd ?
+                        <Fab color="primary" aria-label="add">
+                          <AddIcon/>
+                        </Fab>
+                        :
+                        <Fab color="greey" aria-label="add">
+                          <AddIcon/>
+                        </Fab>
+                      }
                     </IconButton>
                   </TableCell>
                 </TableRow>
@@ -149,7 +221,7 @@ const TableEmployee = () => {
             </Table>
           </div>
 
-          <Table padding={dense ? "none" : "normal"}>
+          <Table padding={dense ? "none" : "normal"} id="print-content">
             <TableHead>
               <TableRow>
                 <StyledTableCell>Имя</StyledTableCell>
@@ -158,17 +230,16 @@ const TableEmployee = () => {
                 <StyledTableCell align="right">Действия</StyledTableCell>
               </TableRow>
             </TableHead>
-
             <TableBody>
               <TableRow>
 
               </TableRow>
 
-              {context.employee.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).reverse().map((props, index) => (
+              {filterEmployee.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).reverse().map((props, index) => (
 
                 <TableRow key={"todo " + index}>
 
-                  <TableCell>
+                  <TableCell style={{width: 120}}>
                     {editEmployeeShow === props.id ?
                       <TextField fullWidth={true}
                                  value={editEmployeeFname}
@@ -242,6 +313,9 @@ const TableEmployee = () => {
                 </TableRow>
               ))}
             </TableBody>
+            <TableCell></TableCell>
+            <TableCell></TableCell>
+            <TableCell></TableCell>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
@@ -259,27 +333,26 @@ const TableEmployee = () => {
         label="Сжать таблицу"
       />
 
-      <Box sx={{ height: 320, transform: 'translateZ(0px)', flexGrow: 1 }}>
-        <SpeedDial
-          ariaLabel="SpeedDial basic example"
-            sx={{ position: 'absolute', bottom: 16, right: 16 }}
-          icon={<SpeedDialIcon />}
-        >
-          {actions.map((action) => (
-            <SpeedDialAction
-              key={action.name}
-              icon={action.icon}
-              tooltipTitle={action.name}
-            />
-          ))}
-        </SpeedDial>
-      </Box>
+      <SpeedDial
+        ariaLabel="SpeedDial openIcon example"
+        sx={{ position: 'absolute', bottom: 16, right: 16 }}
+        icon={<SpeedDialIcon openIcon={<EditIcon />} />}
+      >
+        {actions.map((action) => (
+          <SpeedDialAction
+            key={action.name}
+            icon={action.icon}
+            tooltipTitle={action.name}
+          />
+        ))}
+      </SpeedDial>
 
       {deleteEmployeeShow && (
         <DeleteDialog props={deleteEmployee}
                       open={deleteEmployeeShow}
                       setDeleteEmployeeShow={setDeleteEmployeeShow}/>
       )}
+
     </React.Fragment>
   );
 }

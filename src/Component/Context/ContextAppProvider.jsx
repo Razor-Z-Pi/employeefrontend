@@ -24,7 +24,7 @@ class ContextAppProvider extends Component {
   //create
   create(event, employee) {
     event.preventDefault();
-    axios.post("https://127.0.0.1:8000/api/employee/create", employee)
+    axios.post("http://127.0.0.1:8000/api/employee/create", employee)
       .then(response => {
         if (response.data.message.level === "success") {
           let data = [...this.state.employee];
@@ -45,7 +45,7 @@ class ContextAppProvider extends Component {
 
   //read
   read() {
-    axios.get("https://127.0.0.1:8000/api/employee/read")
+    axios.get("http://127.0.0.1:8000/api/employee/read")
       .then(response => {
         this.setState({
           employee: response.data,

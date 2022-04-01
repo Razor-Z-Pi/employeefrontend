@@ -8,324 +8,182 @@ import {
   TableRow,
   TextField
 } from "@material-ui/core";
-import Navigate from "../../Component/Navigate/Navigate";
-import AddIcon from "@mui/icons-material/Add";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import OutlinedInput from "@mui/material/OutlinedInput";
+import {Accordion, AccordionDetails, AccordionSummary, TableBody, Typography} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import {ProjectContextEmployee} from "../../Component/Context/ContextAppProjectProvider";
+import NavigatePrj from "../../Component/Navigate/NavigatePrj/NavigatePrj";
+import DeleteDialogProject from "../../Component/DeleteDialogProject/DeleteDialogProject";
+import SendIcon from '@mui/icons-material/Send';
+import Button from "@mui/material/Button";
+import DialogDescription from "../../Component/DialogDescription/DialogDescription";
+import {SpeedDial, SpeedDialAction, SpeedDialIcon} from "@mui/lab";
+import EditIcon from "@mui/icons-material/Edit";
+import PrintIcon from "@mui/icons-material/Print";
+import SearchIcon from "@mui/icons-material/Search";
 import Box from "@mui/material/Box";
-import Chip from "@mui/material/Chip";
-import MenuItem from "@mui/material/MenuItem";
-import {useTheme} from "@mui/material/styles";
-import {ItemContext} from "../../Component/Context/ContextAppProvider";
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-
-const names = [
-  "Попов Павел",
-  "Майнагашев Максим",
-  "Иванов Иван",
-  "Сергеев Сергей"
-];
-
-function getStyles(name, personName, theme) {
-  return {
-    fontWeight:
-      personName.indexOf(name) === -1
-        ? theme.typography.fontWeightRegular
-        : theme.typography.fontWeightMedium,
-  };
-}
 
 const ProjectStatus = () => {
-  const context = useContext(ItemContext);
+  const contextPrj = useContext(ProjectContextEmployee);
 
-  const theme = useTheme();
-  const [personName, setPersonName] = useState([]);
+  const [deleteProjectShow, setDeleteProjectShow] = useState(false);
+  const [deleteProject, setDeleteProject] = useState(null);
 
-  const handleChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setPersonName(
-      // On autofill we get a stringified value.
-      typeof value === 'string' ? value.split(',') : value,
-    );
-  };
+  const [description, setDescription] = useState(null);
+  const [descriptionShow, setDescriptionShow] = useState(false);
+
+  const [serchValue, setSerchValue] = useState("");
+
+  const actions = [
+    {
+      icon: <PrintIcon values="Print" onClick={window.print}/>, name: 'PDF'
+    },
+  ];
 
   return (
-    <React.Fragment>
-      <Navigate/>
-      <form>
-        <div>
-          <TableHead>
-            <TableRow sx={{ flexGrow: 1, display: 'flex', flexWrap: "wrap"}}>
-              <TableCell>
-                <TextField fullWidth={true} label="Название проекта"/>
-              </TableCell>
+      <React.Fragment>
+        <NavigatePrj/>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Проект</TableCell>
+                <TableCell>Понедельник</TableCell>
+                <TableCell>Вторник</TableCell>
+                <TableCell>Среда</TableCell>
+                <TableCell>Четверг</TableCell>
+                <TableCell>Пятница</TableCell>
+                <TableCell>Суббота</TableCell>
+                <TableCell>Воскресенье</TableCell>
+                <TableCell>Описание</TableCell>
+                <TableCell align="right">Действия</TableCell>
+              </TableRow>
+            </TableHead>
 
-              <TableCell>
-                <FormControl sx={{width: 200}}>
-                  <InputLabel id="demo-multiple-chip-label">Понедельник</InputLabel>
-                  <Select
-                    labelId="demo-multiple-chip-label"
-                    id="demo-multiple-chip"
-                    multiple
-                    value={personName}
-                    onChange={handleChange}
-                    input={<OutlinedInput id="select-multiple-chip" label="Chip"/>}
-                    renderValue={(selected) => (
-                      <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 0.5}}>
-                        {selected.map((value) => (
-                          <Chip key={value} label={value}/>
-                        ))}
-                      </Box>
-                    )}
-                    MenuProps={MenuProps}
-                  >
-                    {names.map((name) => (
-                      <MenuItem
-                        key={name}
-                        value={name}
-                        style={getStyles(name, personName, theme)}
-                      >
-                        {name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </TableCell>
+            <TableBody>
+              {contextPrj.projectEmployee.slice().reverse().map((props, index) => (
+                  <TableRow key={"todo " + index}>
+                    <TableCell>{props.Name}</TableCell>
 
-              <TableCell>
-                <FormControl sx={{width: 200}}>
-                  <InputLabel id="demo-multiple-chip-label">Вторник</InputLabel>
-                  <Select 
-                    labelId="demo-multiple-chip-label"
-                    id="demo-multiple-chip"
-                    multiple
-                    value={personName}
-                    onChange={handleChange}
-                    input={<OutlinedInput id="select-multiple-chip" label="Chip"/>}
-                    renderValue={(selected) => (
-                      <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 0.5}}>
-                        {selected.map((value) => (
-                          <Chip key={value} label={value}/>
-                        ))}
-                      </Box>
-                    )}
-                    MenuProps={MenuProps}
-                  >
-                    {names.map((name) => (
-                      <MenuItem
-                        key={name}
-                        value={name}
-                        style={getStyles(name, personName, theme)}
-                      >
-                        {name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </TableCell>
+                    {
+                      props.Monday === "Выходной" ?
+                        (<TableCell style={{background: "greenyellow", fontWeight: 700}}>
+                            {props.Monday}
+                        </TableCell>)
+                        :
+                        (<TableCell>{props.Monday}</TableCell>)
+                    }
 
-              <TableCell>
-                <FormControl sx={{width: 200}}>
-                  <InputLabel id="demo-multiple-chip-label">Среда</InputLabel>
-                  <Select
-                    labelId="demo-multiple-chip-label"
-                    id="demo-multiple-chip"
-                    multiple
-                    value={personName}
-                    onChange={handleChange}
-                    input={<OutlinedInput id="select-multiple-chip" label="Chip"/>}
-                    renderValue={(selected) => (
-                      <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 0.5}}>
-                        {selected.map((value) => (
-                          <Chip key={value} label={value}/>
-                        ))}
-                      </Box>
-                    )}
-                    MenuProps={MenuProps}
-                  >
-                    {names.map((name) => (
-                      <MenuItem
-                        key={name}
-                        value={name}
-                        style={getStyles(name, personName, theme)}
-                      >
-                        {name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </TableCell>
 
-              <TableCell>
-                <FormControl sx={{width: 200}}>
-                  <InputLabel id="demo-multiple-chip-label">Четверг</InputLabel>
-                  <Select
-                    labelId="demo-multiple-chip-label"
-                    id="demo-multiple-chip"
-                    multiple
-                    value={personName}
-                    onChange={handleChange}
-                    input={<OutlinedInput id="select-multiple-chip" label="Chip"/>}
-                    renderValue={(selected) => (
-                      <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 0.5}}>
-                        {selected.map((value) => (
-                          <Chip key={value} label={value}/>
-                        ))}
-                      </Box>
-                    )}
-                    MenuProps={MenuProps}
-                  >
-                    {names.map((name) => (
-                      <MenuItem
-                        key={name}
-                        value={name}
-                        style={getStyles(name, personName, theme)}
-                      >
-                        {name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </TableCell>
+                    {
+                      props.Tuesday === "Выходной" ?
+                        (<TableCell style={{background: "greenyellow", fontWeight: 700}}>
+                          {props.Tuesday}
+                        </TableCell>)
+                        :
+                        (<TableCell>{props.Tuesday}</TableCell>)
+                    }
 
-              <TableCell>
-                <FormControl sx={{width: 200}}>
-                  <InputLabel id="demo-multiple-chip-label">Пятница</InputLabel>
-                  <Select
-                    labelId="demo-multiple-chip-label"
-                    id="demo-multiple-chip"
-                    multiple
-                    value={personName}
-                    onChange={handleChange}
-                    input={<OutlinedInput id="select-multiple-chip" label="Chip"/>}
-                    renderValue={(selected) => (
-                      <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 0.5}}>
-                        {selected.map((value) => (
-                          <Chip key={value} label={value}/>
-                        ))}
-                      </Box>
-                    )}
-                    MenuProps={MenuProps}
-                  >
-                    {names.map((name) => (
-                      <MenuItem
-                        key={name}
-                        value={name}
-                        style={getStyles(name, personName, theme)}
-                      >
-                        {name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </TableCell>
+                    {
+                      props.Wednesday === "Выходной" ?
+                        (<TableCell style={{background: "greenyellow", fontWeight: 700}}>
+                          {props.Wednesday}
+                        </TableCell>)
+                        :
+                        (<TableCell>{props.Wednesday}</TableCell>)
+                    }
 
-              <TableCell>
-                <FormControl sx={{width: 200}}>
-                  <InputLabel id="demo-multiple-chip-label">Суббота</InputLabel>
-                  <Select
-                    labelId="demo-multiple-chip-label"
-                    id="demo-multiple-chip"
-                    multiple
-                    value={personName}
-                    onChange={handleChange}
-                    input={<OutlinedInput id="select-multiple-chip" label="Chip"/>}
-                    renderValue={(selected) => (
-                      <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 0.5}}>
-                        {selected.map((value) => (
-                          <Chip key={value} label={value}/>
-                        ))}
-                      </Box>
-                    )}
-                    MenuProps={MenuProps}
-                  >
-                    {names.map((name) => (
-                      <MenuItem
-                        key={name}
-                        value={name}
-                        style={getStyles(name, personName, theme)}
-                      >
-                        {name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </TableCell>
+                    {
+                      props.Thursday === "Выходной" ?
+                        (<TableCell style={{background: "greenyellow", fontWeight: 700}}>
+                          {props.Thursday}
+                        </TableCell>)
+                        :
+                        (<TableCell>{props.Thursday}</TableCell>)
+                    }
 
-              <TableCell>
-                <FormControl sx={{width: 200}}>
-                  <InputLabel id="demo-multiple-chip-label">Воскренье</InputLabel>
-                  <Select
-                    labelId="demo-multiple-chip-label"
-                    id="demo-multiple-chip"
-                    multiple
-                    value={personName}
-                    onChange={handleChange}
-                    input={<OutlinedInput id="select-multiple-chip" label="Chip"/>}
-                    renderValue={(selected) => (
-                      <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 0.5}}>
-                        {selected.map((value) => (
-                          <Chip key={value} label={value}/>
-                        ))}
-                      </Box>
-                    )}
-                    MenuProps={MenuProps}
-                  >
-                    {names.map((name) => (
-                      <MenuItem
-                        key={name}
-                        value={name}
-                        style={getStyles(name, personName, theme)}
-                      >
-                        {name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </TableCell>
+                    {
+                      props.Friday === "Выходной" ?
+                        (<TableCell style={{background: "greenyellow", fontWeight: 700}}>
+                          {props.Friday}
+                        </TableCell>)
+                        :
+                        (<TableCell>{props.Friday}</TableCell>)
+                    }
 
-              <TableCell align="right">
-                <IconButton type="submit">
-                  <Fab color="primary" aria-label="add">
-                    <AddIcon/>
-                  </Fab>
-                </IconButton>
-              </TableCell>
+                    {
+                      props.Sunday === "Выходной" ?
+                        (<TableCell style={{background: "greenyellow", fontWeight: 700}}>
+                          {props.Sunday}
+                        </TableCell>)
+                        :
+                        (<TableCell>{props.Sunday}</TableCell>)
+                    }
 
-            </TableRow>
-          </TableHead>
-        </div>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Проект</TableCell>
-              <TableCell>Понедельник</TableCell>
-              <TableCell>Вторник</TableCell>
-              <TableCell>Среда</TableCell>
-              <TableCell>Четверг</TableCell>
-              <TableCell>Пятница</TableCell>
-              <TableCell>Суббота</TableCell>
-              <TableCell>Воскресенье</TableCell>
-              <TableCell>Действия</TableCell>
-            </TableRow>
-          </TableHead>
-        </Table>
-      </form>
-    </React.Fragment>
+                    {
+                      props.Saturday === "Выходной" ?
+                        (<TableCell style={{background: "greenyellow", fontWeight: 700}}>
+                          {props.Saturday}
+                        </TableCell>)
+                        :
+                        (<TableCell>{props.Saturday}</TableCell>)
+                    }
+
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        endIcon={<SendIcon />}
+                        onClick={() => {
+                          setDescriptionShow(true);
+                          setDescription(props);
+                        }}>
+                        Посмотреть
+                      </Button>
+                    </TableCell>
+
+
+                    <TableCell align="right">
+                      <IconButton onClick={() => {
+                        setDeleteProjectShow(true);
+                        setDeleteProject(props)
+                      }}>
+                        <DeleteIcon/>
+                      </IconButton>
+
+                    </TableCell>
+
+                  </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+
+        <SpeedDial
+          ariaLabel="SpeedDial openIcon example"
+          sx={{ position: 'absolute', bottom: 16, right: 16 }}
+          icon={<SpeedDialIcon openIcon={<EditIcon />} />}
+        >
+          {actions.map((action) => (
+            <SpeedDialAction
+              key={action.name}
+              icon={action.icon}
+              tooltipTitle={action.name}
+            />
+          ))}
+        </SpeedDial>
+
+        {deleteProjectShow && (
+          <DeleteDialogProject
+            props={deleteProject}
+            open={deleteProjectShow}
+            setDeleteProjectShow={setDeleteProjectShow}
+          />
+        )}
+        {description && (
+          <DialogDescription
+          props={description}
+          open={descriptionShow}
+          setDescriptionShow={setDescriptionShow}/>
+        )}
+      </React.Fragment>
   )
 }
 

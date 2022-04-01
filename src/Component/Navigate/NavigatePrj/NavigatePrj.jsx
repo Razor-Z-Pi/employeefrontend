@@ -14,6 +14,7 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import MenuIcon from "@mui/icons-material/Menu";
 import ArticleIcon from '@mui/icons-material/Article';
 import {Link, Redirect} from "react-router-dom";
+import SearchIcon from '@mui/icons-material/Search';
 import {styled} from '@mui/material/styles';
 import {AccountCircle} from "@material-ui/icons";
 import DateRangeIcon from '@mui/icons-material/DateRange';
@@ -22,7 +23,12 @@ import TextField from '@mui/material/TextField';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import {StaticDatePicker} from "@mui/lab";
-import {ItemContext} from "../Context/ContextAppProvider";
+import AddIcon from '@mui/icons-material/Add';
+import Button from "@mui/material/Button";
+import DialogAddProject from "../../DialogAddProject/DialogAddProject";
+import {ProjectContextEmployee} from "../../Context/ContextAppProjectProvider";
+import {connect} from "react-redux";
+import AnalyticsIcon from "@mui/icons-material/Analytics";
 
 const Navigate = () => {
 
@@ -94,7 +100,9 @@ const Navigate = () => {
 
   const [value, setValue] = React.useState(new Date());
 
-  const [serchValue, setSerchValue] = useState("");
+  const [showAddData, setShowAddData] = useState(false);
+
+  const [searchValue, setSearchValue] = useState("");
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -132,16 +140,15 @@ const Navigate = () => {
       link: "/ProjectStatus"
     },
     {
-      text: "Анализ",
-      icon: <ArticleIcon/>,
+      text: "Аналитика",
+      icon: <AnalyticsIcon/>,
       link: "/Analysis"
     }
   ];
-
-  const context = useContext(ItemContext);
-  const filterEmployee = context.employee.filter(item => {
-    return item.fname.toLowerCase().includes(serchValue.toLowerCase());
-  });
+  const context = useContext(ProjectContextEmployee);
+  const filterProject = context.projectEmployee.filter(item => {
+    return item.Name.toLowerCase().includes(searchValue.toLowerCase());
+  })
 
   return (
     <Box sx={{flexGrow: 1}}>
@@ -203,7 +210,16 @@ const Navigate = () => {
           )
           }
           <Typography sx={{flexGrow: 1}}/>
-
+          <Button variant="contained"
+                  color="secondary"
+                  endIcon={<AddIcon />}
+                  style={{marginRight: 10}}
+                  onClick={() => {
+                    setShowAddData(true);
+                  }}>
+            Добавить проект
+          </Button>
+          <Typography style={{fontWeight:700}}>{localStorage.getItem("Admin")}</Typography>
           {auth && (
             <div>
               <IconButton
@@ -253,8 +269,23 @@ const Navigate = () => {
       {
         (logout && <Redirect to="./LoginRedirect"/>)
       }
+      {
+        showAddData && (<DialogAddProject open={showAddData} setShowAddData={setShowAddData} />)
+      }
     </Box>
   );
 }
 
-export default Navigate;
+function mapSetToProps(state) {
+  return {
+    filterP: state.filterP
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    AddFilter: () => dispatch({type: "AddFilter"})
+  }
+}
+
+export default connect(mapSetToProps, mapDispatchToProps)(Navigate);

@@ -14,6 +14,7 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import MenuIcon from "@mui/icons-material/Menu";
 import ArticleIcon from '@mui/icons-material/Article';
 import {Link, Redirect} from "react-router-dom";
+import SearchIcon from '@mui/icons-material/Search';
 import {styled} from '@mui/material/styles';
 import {AccountCircle} from "@material-ui/icons";
 import DateRangeIcon from '@mui/icons-material/DateRange';
@@ -22,9 +23,9 @@ import TextField from '@mui/material/TextField';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import {StaticDatePicker} from "@mui/lab";
-import {ItemContext} from "../Context/ContextAppProvider";
+import AnalyticsIcon from '@mui/icons-material/Analytics';
 
-const Navigate = () => {
+const AnalysNav = () => {
 
   const useStyles = makeStyles(theme => ({
     menuIcon: {
@@ -39,48 +40,6 @@ const Navigate = () => {
     }
   }));
 
-  const Search = styled('div')(({theme}) => ({
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    '&:hover': {
-      backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing(1),
-      width: 'auto',
-    },
-  }));
-
-  const SearchIconWrapper = styled('div')(({theme}) => ({
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  }));
-
-  const StyledInputBase = styled(InputBase)(({theme}) => ({
-    color: 'inherit',
-    '& .MuiInputBase-input': {
-      padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
-      paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-      transition: theme.transitions.create('width'),
-      width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        width: '12ch',
-        '&:focus': {
-          width: '20ch',
-        },
-      },
-    },
-  }));
-
 
   const classes = useStyles();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -90,11 +49,8 @@ const Navigate = () => {
   const [dateForm, setDateForm] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [logout, setLogout] = useState(false);
-  const [search, setSearch] = useState("");
 
   const [value, setValue] = React.useState(new Date());
-
-  const [serchValue, setSerchValue] = useState("");
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -132,16 +88,11 @@ const Navigate = () => {
       link: "/ProjectStatus"
     },
     {
-      text: "Анализ",
-      icon: <ArticleIcon/>,
+      text: "Аналитика",
+      icon: <AnalyticsIcon/>,
       link: "/Analysis"
     }
   ];
-
-  const context = useContext(ItemContext);
-  const filterEmployee = context.employee.filter(item => {
-    return item.fname.toLowerCase().includes(serchValue.toLowerCase());
-  });
 
   return (
     <Box sx={{flexGrow: 1}}>
@@ -159,51 +110,10 @@ const Navigate = () => {
             <MenuIcon/>
           </IconButton>
           <Typography variant="h6" component="div" sx={{display: {xs: 'none', sm: 'block'}}}>
-            <b>Планировщик рабочей недели</b>
+            <b>Аналитика</b>
           </Typography>
-          {date && (
-            <div>
-              <IconButton
-                size="large"
-                aria-label="date-project"
-                aria-controls="menu-date"
-                aria-haspopup="true"
-                onClick={handleDate}
-                color="inherit">
-                <DateRangeIcon/>
-              </IconButton>
-              <Menu id="menu-appbar-date"
-                    dateForm={dateForm}
-                    anchorOrigin={{
-                      vertical: 'top',
-                      horizontal: 'left',
-                    }}
-                    keepMounted
-                    transformOrigin={{
-                      vertical: 'top',
-                      horizontal: 'left',
-                    }}
-                    open={Boolean(dateForm)}
-                    onClose={handleCloseDate}
-              >
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <StaticDatePicker
-                    orientation="landscape"
-                    openTo="day"
-                    value={value}
-                    shouldDisableDate={isWeekend}
-                    onChange={(newValue) => {
-                      setValue(newValue);
-                    }}
-                    renderInput={(params) => <TextField {...params} />}
-                  />
-                </LocalizationProvider>
-              </Menu>
-            </div>
-          )
-          }
           <Typography sx={{flexGrow: 1}}/>
-
+          <Typography style={{fontWeight:700}}>{localStorage.getItem("Admin")}</Typography>
           {auth && (
             <div>
               <IconButton
@@ -257,4 +167,4 @@ const Navigate = () => {
   );
 }
 
-export default Navigate;
+export default AnalysNav;

@@ -1,10 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, TextField} from "@mui/material";
+import {Alert, Backdrop, CircularProgress, FormControlLabel, Switch, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
 import "../App.css";
-import axios from "axios";
 import {AppBar, Toolbar, Typography} from "@material-ui/core";
 import {Redirect} from "react-router-dom";
+import axios from "axios";
+import Box from "@mui/material/Box";
+import ToggleColorMode from "../Component/Context/DarkTheme";
+
+const API_URL = "http://127.0.0.1:8000/auth/login";
 
 const Login = () =>  {
 
@@ -16,8 +20,15 @@ const Login = () =>  {
   const [passwordError, setPasswordError] = useState("Пароль не должен быть пустым");
   const [formValid, setFormValid] = useState(false); // состояние кнопки
 
-  const [redirectPut, setRedirectPut] = useState(false); // Переход с авторизации
-  const [blockAuth, setBlockAuth] = useState(false); // Если не прошёл проверку авторизации
+  const [blockAuth, setBlockAuth] = useState(false);
+  const [redirectPut, setRedirectPut] = useState(false);
+  const [redirectEmployee, setRedirectEmployee] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+
+  function handleClick() {
+    setLoading(true);
+  }
 
   // разблокировка кнопки или нет???
   useEffect(() => {
@@ -65,27 +76,28 @@ const Login = () =>  {
     }
   }
 
-
-  // Отправка данных с полей для проверки, сотрудника в БД
-  const handleSubmit = props => {
+  const login = (props, user, password) => {
     props.preventDefault();
-
-    console.log(user);
-    console.log(password);
-
-    axios.post("https://127.0.0.1:8000/auth/login", {
+    axios.post(API_URL, {
         login: user,
         Password: password
       }
     )
       .then(response => {
-        console.log(response);
         if (response.data.message.level === "good") {
-          setBlockAuth(true);
-          setRedirectPut(true);
+          if (response.data.Role == 1) {
+            localStorage.setItem("Admin", "Администратор");
+            setRedirectPut(true);
+          }
+          if (response.data.Role == 2) {
+            localStorage.setItem("Admin", user);
+            setRedirectEmployee(true);
+          }
+          setBlockAuth(false);
         } else {
           setRedirectPut(false);
           setBlockAuth(true);
+          setLoading(false);
         }
       }).catch(error => {
       console.error(error);
@@ -106,7 +118,11 @@ const Login = () =>  {
       <br/>
       <br/>
       <div className="App">
-        <form method="POST" onSubmit={props => handleSubmit(props)} action="" className="FormApp">
+        <form method="POST" onSubmit={props => {
+          login(props, user, password);
+        }}
+              action=""
+              className="FormApp">
           <h1>Авторизация</h1>
           <TextField
             className="Login"
@@ -131,12 +147,18 @@ const Login = () =>  {
             type="password"
             required/>
           <br/>
-          <Button
-            name="authBTN"
-            type="submit"
-            disabled={!formValid}
-            variant="contained"
-            color="success">Войти</Button>
+          <Box>
+            <Button
+              name="authBTN"
+              type="submit"
+              disabled={!formValid}
+              loading={loading}
+              variant="contained"
+              color="success"
+              onClick={handleClick}>
+                Войти
+            </Button>
+          </Box>
         </form>
       </div>
 
@@ -155,6 +177,17 @@ const Login = () =>  {
       {
         (redirectPut && <Redirect to="./HomeList" />)
       }
+
+      {
+        (redirectEmployee && <Redirect to="/EmployeeList" />)
+      }
+
+      {loading && (<Backdrop
+        open={loading}
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>)}
     </div>
   );
 }
