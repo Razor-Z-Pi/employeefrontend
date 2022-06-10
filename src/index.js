@@ -15,7 +15,7 @@ const app = (
   <Provider store={store}>
     <ContextAppProvider>
       <React.StrictMode>
-        <App/>
+                <App/>
       </React.StrictMode>
     </ContextAppProvider>
   </Provider>

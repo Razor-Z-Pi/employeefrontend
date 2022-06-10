@@ -38,7 +38,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "test": "jest"
   },
   "eslintConfig": {
     "extends": [
@@ -59,6 +60,7 @@
     ]
   },
   "devDependencies": {
+    "jest": "^28.0.3",
     "prop-types": "^15.8.1",
     "remote-redux-devtools": "^0.5.16"
   }

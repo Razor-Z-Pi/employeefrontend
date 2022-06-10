@@ -17,7 +17,7 @@ import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
 import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
 import DeleteDialog from "../DeleteDialog/DeleteDialog";
-import {Paper} from "@mui/material";
+import {InputLabel, Paper, Select} from "@mui/material";
 import {styled} from '@mui/material/styles';
 import {tableCellClasses} from '@mui/material/TableCell';
 import SearchIcon from "@mui/icons-material/Search";
@@ -27,6 +27,8 @@ import PrintIcon from '@mui/icons-material/Print';
 import {connect} from "react-redux";
 import context from "react-redux/lib/components/Context";
 import DialogLogin from "../DialogLogin/DialogLogin";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
 
 const StyledTableCell = styled(TableCell)(({theme}) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -46,7 +48,7 @@ const TableEmployee = () => {
   const [addEmployeelname, setAddEmployeeLname] = useState("");
   const [addEmployeePosition, setAddEmployeePosition] = useState("");
 
-  // Хука дял показывания полей редактирования
+  // Хука для показывания полей редактирования
   const [editEmployeeShow, setEditEmployeeShow] = useState(false);
 
   // Хуки для редоктирования
@@ -111,18 +113,8 @@ const TableEmployee = () => {
     }
   }
 
-  const validateButtonPosition = (event) => {
-    event.preventDefault();
-    if (!/^\s*$/.test(event.target.value)) {
-      setValidPosition(true);
-    } else {
-      setValidPosition(false);
-      setBtnAdd(true);
-    }
-  }
-
   const reDisable = () => {
-    if (validFname && validLname && validPosition) {
+    if (validFname && validLname) {
       setBtnAdd(false);
     }
   }
@@ -155,6 +147,10 @@ const TableEmployee = () => {
       icon: <PrintIcon values="Print" onClick={window.print}/>, name: 'PDF'
     },
   ];
+
+  const SelectedPosition = (event: SelectChangeEvent) => {
+    setAddEmployeePosition(event.target.value);
+  }
 
   return (
     <React.Fragment>
@@ -192,15 +188,22 @@ const TableEmployee = () => {
                   </TableCell>
 
                   <TableCell>
-                    <TextField fullWidth={true} value={addEmployeePosition} onChange={(event) => {
-                      if (event.target.value.length < 25) {
-                        setAddEmployeePosition(event.target.value);
-                        validateButtonPosition(event);
-                        reDisable();
-                      } else {
-                        alert("Не больше 25 символов");
-                      }
-                    }} label="Должность"/>
+                    <FormControl fullWidth={true} variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                      <InputLabel id="demo-simple-select-standard-label">Должность</InputLabel>
+                      <Select
+                          labelId="demo-simple-select-standard-label"
+                          id="demo-simple-select-standard"
+                          value={addEmployeePosition}
+                          label="Должность"
+                          onChange={SelectedPosition}
+                      >
+                        <MenuItem value={"Системный администратор"}>Системный администратор</MenuItem>
+                        <MenuItem value={"Дизайнер"}>Дизайнер</MenuItem>
+                        <MenuItem value={"Менеджер"}>Менеджер</MenuItem>
+                        <MenuItem value={"Продукт-Менеджер"}>Продукт-Менеджер</MenuItem>
+                        <MenuItem value={"Программист"}>Программист</MenuItem>
+                      </Select>
+                    </FormControl>
                   </TableCell>
 
                   <TableCell>

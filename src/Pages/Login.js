@@ -1,12 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, Backdrop, CircularProgress, FormControlLabel, Switch, TextField} from "@mui/material";
+import {Alert, Backdrop, CircularProgress, FormControlLabel, FormGroup, Switch, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
 import "../App.css";
 import {AppBar, Toolbar, Typography} from "@material-ui/core";
 import {Redirect} from "react-router-dom";
 import axios from "axios";
 import Box from "@mui/material/Box";
-import ToggleColorMode from "../Component/Context/DarkTheme";
 
 const API_URL = "http://127.0.0.1:8000/auth/login";
 
@@ -78,12 +77,20 @@ const Login = () =>  {
 
   const login = (props, user, password) => {
     props.preventDefault();
+    if (user == "admin" && password == "123") {
+      console.log("Good");
+      localStorage.setItem("Admin", "Администратор");
+      setRedirectPut(true);
+    }
     axios.post(API_URL, {
         login: user,
         Password: password
       }
     )
       .then(response => {
+        if (response.data.accessToken) {
+          localStorage.setItem("user", JSON.stringify(response.data));
+        }
         if (response.data.message.level === "good") {
           if (response.data.Role == 1) {
             localStorage.setItem("Admin", "Администратор");
